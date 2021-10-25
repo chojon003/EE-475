@@ -14,10 +14,11 @@ class WaterBottle
     
 
   public:
-    WaterBottle(/* stuff like pins for sensors*/);
+    WaterBottle(byte HX711CLK, byte HX711Dout /* stuff like pins for sensors*/);
 
-    calibrateBottleWeight();
-    getWaterWeight();
+    void tareWeightPlate();
+    void calibrateBottleWeight(short knownBottleWeight); // in grams
+    short getWaterWeight();
 };
 
 #endif // WATER_BOTTLE_H
