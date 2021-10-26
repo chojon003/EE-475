@@ -2,7 +2,7 @@
 
 System::System()
 {
-  batteryOutputPin = A6;
+  
   //ADCRefVoltage = AR_INTERNAL; // 3.6 V, just able to do 3.6?
   ADCRefVoltage = 3.6;
   ADCResolution = 8; // 8 bits
@@ -15,10 +15,11 @@ System::System()
   
 }
 
+// will this work if battery voltage > ADCRefVoltage?
 bool System::batteryIsLow(float threshold)
 {
   // get battery voltage, multiply by 2 is used to undo resistor divider effect
-  batteryVoltage = analogRead(batteryOutputPin) * 2 * ADCRefVoltage / pow(2, ADCResolution)
+  float batteryVoltage = analogRead(BATTERY_PIN) * 2 * ADCRefVoltage / pow(2, ADCResolution);
 
-  return true
+  return batteryVoltage < threshold;
 }

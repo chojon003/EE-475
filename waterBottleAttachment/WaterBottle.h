@@ -10,9 +10,6 @@ class WaterBottle
   private:
     HX711 wSensors;
 
-    short bottleWeight; // in grams
-    
-
   public:
     WaterBottle(byte HX711CLK, byte HX711Dout /* stuff like pins for sensors*/);
 

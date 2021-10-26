@@ -7,8 +7,7 @@ class System
 {
   private:
 
-  
-    byte batteryOutputPin;
+    const byte BATTERY_PIN = A6;
     float ADCRefVoltage;
     byte ADCResolution;
     

@@ -43,5 +43,5 @@ short WaterBottle::getWaterWeight()
 
   wSensors.power_down();
   
-  return measuredWaterWeight
+  return measuredWaterWeight;
 }
