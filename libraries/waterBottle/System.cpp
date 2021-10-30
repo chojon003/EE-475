@@ -4,12 +4,12 @@ System::System()
 {
   
   //ADCRefVoltage = AR_INTERNAL; // 3.6 V, just able to do 3.6?
-  ADCRefVoltage = 3.6;
+  //ADCRefVoltage = AR_INTERNAL_3_0; neither working, not sure why
   ADCResolution = 8; // 8 bits
 
   
   // configure ADC 
-  analogReference(ADCRefVoltage);
+  //analogReference(ADCRefVoltage);
   analogReadResolution(ADCResolution);
 
   
