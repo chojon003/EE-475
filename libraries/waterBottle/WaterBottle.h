@@ -8,10 +8,11 @@
 class WaterBottle
 {
     private:
-        HX711 wSensors;
+        //HX711 wSensors;
 
     public:
-        WaterBottle(byte HX711CLK, byte HX711Dout /* stuff like pins for sensors*/);
+        HX711 wSensors; // public for testing
+        WaterBottle(byte HX711CLK, byte HX711Dout, byte HX711Gain /* stuff like pins for sensors*/);
 
         void tareWeightPlate();
         void calibrateBottleWeight(short knownBottleWeight); // in grams

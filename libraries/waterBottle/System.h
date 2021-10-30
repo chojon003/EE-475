@@ -1,5 +1,4 @@
-//#include <Arduino.h> // maybe just need stdint.h? only included for bytes
-#include <stdint.h>
+#include <Arduino.h>
 #include "registers.h"
 
 #ifndef SYSTEM_H

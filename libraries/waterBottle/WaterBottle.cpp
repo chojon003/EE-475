@@ -1,9 +1,9 @@
 #include "WaterBottle.h"
 #include <Adafruit_TinyUSB.h> // for testing, remove later
 
-WaterBottle::WaterBottle(byte HX711CLK, byte HX711Dout)
+WaterBottle::WaterBottle(byte HX711CLK, byte HX711Dout, byte HX711Gain)
 {
-    wSensors.begin(HX711Dout, HX711CLK); // add gain to this???
+    wSensors.begin(HX711Dout, HX711CLK, HX711Gain); // add gain to this???
     wSensors.power_down();
 
 

@@ -24,31 +24,6 @@ bool System::batteryIsLow(float threshold)
     return batteryVoltage < threshold;
 }
 
-// notes:
-// - a 32.768 external clock is supplied
-// - low frequency clk can be calibrated with high frequency clock
-void System::setClockSpeed(int speed)
-{
-    if (speed == 32) // enable ultra low power 32 kHz clock
-    {
-        // stop higher frequency clocks?
-
-        LFCLKSRC = 0; // set LF clock source as RC oscillator
-        LFRCMODE = 0x1; // set LFRC mode to ultra low power
-        TASKS_LFCLKSTART = 0x1; // start LF clock
-
-        while (LFCLKSTAT &= 0x10000 != 0); // wait for LF clock to start
-    }
-    else if (speed == 1) // enable 1 MHz clock
-    {
-
-    }
-    else // enable 64 MHz clock
-    {
-
-    }
-}
-
 void System::enableLFClock(short en)
 {
     if (en == 1) // enable ultra low power 32.768 kHz clock
