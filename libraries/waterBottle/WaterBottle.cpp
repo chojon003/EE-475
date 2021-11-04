@@ -5,7 +5,8 @@ WaterBottle::WaterBottle(byte HX711CLK, byte HX711Dout, byte HX711Gain)
 {
     wSensors.begin(HX711Dout, HX711CLK, HX711Gain); // add gain to this???
     wSensors.power_down();
-
+    colorSensor = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
+    X = 15.0;	
 
 }
 
