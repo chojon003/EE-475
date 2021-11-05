@@ -5,8 +5,6 @@
 // color of the water bottle without any liquid in it.
 //
 
-#include "WaterBottle.h"
-#include <Adafruit_TinyUSB.h>
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 
@@ -16,13 +14,14 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS347
 // currently stores data in global var, when implemented will change so that app can
 // send these values to the mcu instead.
 uint16_t rBottle, gBottle, bBottle, cBottle;
-double X = 15.0;
+double X = 25.0;
 
 void setup() {
+  
   Serial.begin(9600);
   if (tcs.begin()) {
     Serial.println("Found sensor");
-    calibrate();
+    calibrateColor();
   } else {
     Serial.println("No TCS34725 found ... check your connections");
     while (1);
@@ -71,12 +70,15 @@ int getColor() {
   
   // if rbg value is > certain percentage X,meaning the color is more than X% different.
   if (((rDiff * 100) > X) || ((gDiff * 100) > X) || ((bDiff * 100) > X)) {
+    Serial.println("Not water");
     return 0;
   }
+  Serial.println("Is water");
   return 1;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
+  getColor();
+  delay(500);
 }
