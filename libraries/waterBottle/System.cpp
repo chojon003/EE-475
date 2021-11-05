@@ -55,3 +55,13 @@ void System::enterSleepMode()
 {
     SYSTEMOFF = 0x1; // toggle microcontroller system off mode
 }
+
+void System::turnOffMemory()
+{
+    // turn off unused ram memory
+    RAM4POWER = 0;
+    RAM5POWER = 0;
+    RAM6POWER = 0;
+    RAM7POWER = 0;
+    RAM8POWER = 0;
+}

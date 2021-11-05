@@ -24,6 +24,7 @@ class System
         void enableDCReg(short en); // might save some power, make private or remove function later, public for testing
         void enterSleepMode(); // need some way to wake microcontroller up
         // void enable low power mode? not sure if needed, system already starts in this mode?
+        void turnOffMemory();
 };
 
 #endif // SYSTEM_H

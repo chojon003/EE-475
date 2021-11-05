@@ -8,6 +8,11 @@
 // power registers
 #define DCDCEN                  (*(volatile uint32_t *) 0x40000578)
 #define SYSTEMOFF               (*(volatile uint32_t *) 0x40000500)
+#define RAM4POWER               (*(volatile uint32_t *) 0x40000940)
+#define RAM5POWER               (*(volatile uint32_t *) 0x40000950)
+#define RAM6POWER               (*(volatile uint32_t *) 0x40000960)
+#define RAM7POWER               (*(volatile uint32_t *) 0x40000970)
+#define RAM8POWER               (*(volatile uint32_t *) 0x40000980)
 
 // clock registers
 #define TASKS_LFCLKSTART        (*(volatile uint32_t *) 0x40000008)
