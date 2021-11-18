@@ -2,26 +2,23 @@
 
 System::System()
 {
-
-    //ADCRefVoltage = AR_INTERNAL; // 3.6 V, just able to do 3.6?
-    //ADCRefVoltage = AR_INTERNAL_3_0; neither working, not sure why
+    ADCRefVoltage = 3.6; // default
     ADCResolution = 8; // 8 bits
 
 
     // configure ADC
-    //analogReference(ADCRefVoltage);
     analogReadResolution(ADCResolution);
 
 
 }
 
 // will this work if battery voltage > ADCRefVoltage?
-bool System::batteryIsLow(float threshold)
+float System::getBatteryVoltage()
 {
     // get battery voltage, multiply by 2 is used to undo resistor divider effect
     float batteryVoltage = analogRead(BATTERY_PIN) * 2 * ADCRefVoltage / pow(2, ADCResolution);
 
-    return batteryVoltage < threshold;
+    return batteryVoltage;
 }
 
 void System::enableLFClock(short en)
@@ -31,14 +28,14 @@ void System::enableLFClock(short en)
         LFCLKSRC = 0; // set LF clock source as RC oscillator
         LFRCMODE = 0x1; // set LFRC mode to ultra low power
         TASKS_LFCLKSTART = 0x1; // start LF clock
-
-        while (LFCLKSTAT &= 0x10000 == 0); // wait for LF clock to start
+	
+        while ((LFCLKSTAT & 0x10000) == 0); // wait for LF clock to start
     }
     else // disable
     {
         TASKS_LFCLKSTOP = 0x1; // stop LF clock
 
-        while (LFCLKSTAT &= 0x10000 != 0); // wait for LF clock to stop
+        while ((LFCLKSTAT & 0x10000) != 0); // wait for LF clock to stop
     }
 }
 
@@ -51,9 +48,28 @@ void System::enableDCReg(short en)
         DCDCEN = 0;
 }
 
+// uses A0 pin on microcontroller board
 void System::enterSleepMode()
 {
-    SYSTEMOFF = 0x1; // toggle microcontroller system off mode
+    // set analog wake up pin to be A0 of board (AIN2 of microcontroller)
+    LPCOMPPSEL = 0x2;
+
+    // select comparison voltage as VDD / 2 (1.15 V)
+    LPCOMPREFSEL = 0x3;
+
+    // enable hysteresis feature
+    LPCOMPHYST = 0x1;
+
+    // configure wake up for voltage rising on wake up pin
+    ANALOGDETECT = 0x1;
+
+    // start comparator and wait for completion
+    LPCOMPEN = 0x1;
+    TASKS_LPCOMPSTART = 0x1;
+    while (EVENTS_LPCOMPREADY == 0);
+
+    // enter sleep mode
+    SYSTEMOFF = 0x1;
 }
 
 void System::turnOffMemory()

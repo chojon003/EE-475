@@ -21,4 +21,13 @@
 #define LFRCMODE                (*(volatile uint32_t *) 0x400005B4)
 #define LFCLKSTAT               (*(volatile uint32_t *) 0x40000418)
 
+// lpcomp registers
+#define TASKS_LPCOMPSTART       (*(volatile uint32_t *) 0x40013000)
+#define EVENTS_LPCOMPREADY      (*(volatile uint32_t *) 0x40013100)
+#define LPCOMPEN                (*(volatile uint32_t *) 0x40013500)
+#define ANALOGDETECT            (*(volatile uint32_t *) 0x40013520)
+#define LPCOMPPSEL              (*(volatile uint32_t *) 0x40013504)
+#define LPCOMPREFSEL            (*(volatile uint32_t *) 0x40013508)
+#define LPCOMPHYST              (*(volatile uint32_t *) 0x40013538)
+
 #endif // REGISTERS_H

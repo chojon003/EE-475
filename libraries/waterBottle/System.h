@@ -17,7 +17,7 @@ class System
     public:
         System(/* stuff like pins for sensors*/);
 
-        bool batteryIsLow(float threshold);
+        float getBatteryVoltage();
 
         void enableLFClock(short en); // 0 or 1, might not need function at all
 

@@ -5,7 +5,6 @@
 
 System powerTest;
 
-
 void setup()
 {
   // DC/DC reg option
@@ -16,8 +15,17 @@ void setup()
 
   // Reduced memory option
   //powerTest.turnOffMemory();
+
+  // Low frequency clock enabled
+  //powerTest.enableLFClock(1);
 }
 
 void loop() 
 {
+  // Using delay
+  /*
+  delay(2000);
+  for (int i = 0; i < 10000; i++)
+    analogRead(A0);
+  */
 }
