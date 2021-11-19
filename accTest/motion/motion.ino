@@ -57,11 +57,9 @@ void loop() {
   //Serial.print("  \tY:  "); Serial.print(lis.y);
   //Serial.print("  \tZ:  "); Serial.print(lis.z);
 
-  /* Or....get a new sensor event, normalized */
+/*
   sensors_event_t event;
   lis.getEvent(&event);
-
-  /* Display the results (acceleration is measured in m/s^2) */
   double acc_x = event.acceleration.x;
   double acc_y = event.acceleration.y;
   double acc_z = event.acceleration.z+9.8;
@@ -74,14 +72,21 @@ void loop() {
   //Serial.println(" m/s^2 ");
 
   Serial.println();
-
-
+*/
+  
+  int still = is_still(); // returns 1 if there's no tilt and movement
   delay(1000);
 }
 
-// is_still returns 1 if there's no tilt and movement
-int is_still(double a,double b,double c){
-  if (a+b+c<1.5 && c<0.5){
+// is_still returns 1 if the bottle is not in motion or tilt
+int is_still(){
+  sensors_event_t event;
+  lis.getEvent(&event);   // get a new accelerometer event
+  // Display the results (acceleration is measured in m/s^2)
+  double acc_x = event.acceleration.x;
+  double acc_y = event.acceleration.y;
+  double acc_z = event.acceleration.z+9.8;
+  if (a+b+c<1.5 && c>-0.5){
     Serial.println("The bottle is ready for measurement!");
     return 1;
   }
