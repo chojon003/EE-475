@@ -1,4 +1,4 @@
-// placeholder file for waterbottle class, uses RGB and weight sensors
+// file for waterbottle class, uses RGB and weight sensors
 
 #include "HX711.h"
 #include "Adafruit_TCS34725.h"
@@ -10,23 +10,33 @@
 class WaterBottle
 {
     private:
-        //HX711 wSensors;
-	Adafruit_TCS34725 colorSensor;
-	uint16_t rBottle, gBottle, bBottle, cBottle;
-	double X;
+        //HX711 wSensor;
+        Adafruit_TCS34725 colorSensor;
+        uint16_t rBottle, gBottle, bBottle, cBottle;
+        double X;
 
     public:
-        HX711 wSensors; // public for testing
-        WaterBottle(byte HX711CLK, byte HX711Dout, byte HX711Gain /* stuff like pins for sensors*/);
-	
-        void tareWeightPlate();
-        void calibrateBottleWeight(short knownBottleWeight); // in grams
-        short getWaterWeight();
-	
-	void calibrateColor();
-	int isWater();
-	int getColor();
+        HX711 wSensor; // public for testing
 
+        // constructor, requires that nothing be on weight sensors when started
+        WaterBottle(byte HX711CLK, byte HX711Dout);
+
+        // tares the initial weight on the weight sensor
+        void tareWeightPlate();
+
+        // calibrates the weight sensor readings, requires an empty bottle to be
+        // placed on the weight sensing plate
+        void calibrateBottleWeight(short knownBottleWeight); // in grams
+
+        // returns the current weight of water in the water bottle
+        short getWaterWeight();
+
+        // saves the base color of the water bottle
+        void calibrateColor();
+
+        // gets the color of the liquid in the water bottle, returns 1 if water,
+        // 0 if not
+        int isWater();
 };
 
 #endif // WATER_BOTTLE_H
