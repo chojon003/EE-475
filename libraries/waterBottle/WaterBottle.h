@@ -10,14 +10,13 @@
 class WaterBottle
 {
     private:
-        //HX711 wSensor;
+        HX711 wSensor;
+
         Adafruit_TCS34725 colorSensor;
         uint16_t rBottle, gBottle, bBottle, cBottle;
         double X;
 
     public:
-        HX711 wSensor; // public for testing
-
         // constructor, requires that nothing be on weight sensors when started
         WaterBottle(byte HX711CLK, byte HX711Dout);
 
