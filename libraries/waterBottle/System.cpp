@@ -5,11 +5,13 @@ System::System()
     ADCRefVoltage = 3.6; // default
     ADCResolution = 8; // 8 bits
 
-
     // configure ADC
     analogReadResolution(ADCResolution);
 
-
+    // set low power
+    enableLFClock(1);
+    enableDCReg(1);
+    turnOffMemory();
 }
 
 // will this work if battery voltage > ADCRefVoltage?
@@ -21,14 +23,14 @@ float System::getBatteryVoltage()
     return batteryVoltage;
 }
 
-void System::enableLFClock(short en)
+void System::enableLFClock(byte en)
 {
     if (en == 1) // enable ultra low power 32.768 kHz clock
     {
         LFCLKSRC = 0; // set LF clock source as RC oscillator
         LFRCMODE = 0x1; // set LFRC mode to ultra low power
         TASKS_LFCLKSTART = 0x1; // start LF clock
-	
+
         while ((LFCLKSTAT & 0x10000) == 0); // wait for LF clock to start
     }
     else // disable
@@ -39,7 +41,7 @@ void System::enableLFClock(short en)
     }
 }
 
-void System::enableDCReg(short en)
+void System::enableDCReg(byte en)
 {
     // enable DC/DC regulator for microchip voltage supply
     if (en == 1)

@@ -7,17 +7,8 @@ System powerTest;
 
 void setup()
 {
-  // DC/DC reg option
-  //powerTest.enableDCReg(1);
-
   // Sleep mode option
   //powerTest.enterSleepMode();
-
-  // Reduced memory option
-  //powerTest.turnOffMemory();
-
-  // Low frequency clock enabled
-  //powerTest.enableLFClock(1);
 }
 
 void loop() 

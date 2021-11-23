@@ -12,19 +12,18 @@ class System
         float ADCRefVoltage;
         byte ADCResolution;
 
+        void enableLFClock(byte en);
 
+        void enableDCReg(byte en);
+
+        void turnOffMemory();
 
     public:
         System(/* stuff like pins for sensors*/);
 
         float getBatteryVoltage();
 
-        void enableLFClock(short en); // 0 or 1, might not need function at all
-
-        void enableDCReg(short en); // might save some power, make private or remove function later, public for testing
-        void enterSleepMode(); // need some way to wake microcontroller up
-        // void enable low power mode? not sure if needed, system already starts in this mode?
-        void turnOffMemory();
+        void enterSleepMode();
 };
 
 #endif // SYSTEM_H
