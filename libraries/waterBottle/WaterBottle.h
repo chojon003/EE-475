@@ -36,6 +36,9 @@ class WaterBottle
         // gets the color of the liquid in the water bottle, returns 1 if water,
         // 0 if not
         int isWater();
+
+        // is_still returns 1 if the bottle is not in motion or tilt
+        int is_still();
 };
 
 #endif // WATER_BOTTLE_H

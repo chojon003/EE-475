@@ -11,6 +11,12 @@ WaterBottle::WaterBottle(byte HX711CLK, byte HX711Dout)
     // initialize color sensor
     colorSensor = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
     X = 25.0;
+
+    // initialize accelerometer
+    Adafruit_LIS3DH lis = Adafruit_LIS3DH();
+    lis.begin(0x19);
+    lis.setRange(LIS3DH_RANGE_4_G);   // set range to 2, 4, 8 or 16 G!
+    lis.setDataRate(LIS3DH_DATARATE_400_HZ); //set data rate
 }
 
 void WaterBottle::tareWeightPlate()
@@ -77,4 +83,19 @@ int WaterBottle::isWater()
         return 0;
     else
         return 1;
+}
+
+
+int WaterBottle::is_still(){
+  sensors_event_t event;
+  lis.getEvent(&event);   // get a new accelerometer event
+  // Display the results (acceleration is measured in m/s^2)
+  double acc_x = event.acceleration.x;
+  double acc_y = event.acceleration.y;
+  double acc_z = event.acceleration.z+9.8;
+  if (a+b+c<1.5 && c>-0.5){
+    Serial.println("The bottle is ready for measurement!");
+    return 1;
+  }
+  return 0;
 }
