@@ -20,8 +20,8 @@ System::System()
     //lis.setDataRate(LIS3DH_DATARATE_400_HZ); //set data rate
     Wire.begin();
     init_ACC();
-    //int res = readRegister(0x0F); //WHO_AM_I
-    //pinMode(INTERRUPT_PIN, INPUT); 
+    int res = readRegister(0x0F); //WHO_AM_I
+    pinMode(INTERRUPT_PIN, INPUT); 
 }
 
 // will this work if battery voltage > ADCRefVoltage?
@@ -101,7 +101,7 @@ int System::is_still(){
   double acc_x = event.acceleration.x;
   double acc_y = event.acceleration.y;
   double acc_z = event.acceleration.z+9.8;
-  if (acc_x+acc_y+acc_z<1.5 && acc_z>-0.5){
+  if (abs(acc_x)<0.2 && abs(acc_y)<0.2 && abs(acc_z)<0.5){
     Serial.println("The bottle is ready for measurement!");
     return 1;
   }

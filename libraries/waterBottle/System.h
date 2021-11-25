@@ -13,8 +13,8 @@ class System
         
         Adafruit_LIS3DH lis;
         const int INTERRUPT_PIN = A0;
-        int LIS3DH_ADDR = 0x19;
-        //unsigned int readRegister(byte reg);
+        const int LIS3DH_ADDR = 0x18;
+        unsigned int readRegister(byte reg);
         void writeRegister(byte reg, byte data);
         void init_ACC(void);
 
@@ -36,7 +36,6 @@ class System
 
         void enterSleepMode();
 
-        unsigned int readRegister(byte reg);
         int is_still();
 };
 
