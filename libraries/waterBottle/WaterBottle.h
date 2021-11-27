@@ -30,12 +30,12 @@ class WaterBottle
         // returns the current weight of water in the water bottle
         short getWaterWeight();
 
-        // saves the base color of the water bottle
-        void calibrateColor();
+        // saves the base color of the water bottle, averaged over times readings
+        void calibrateColor(byte times);
 
-        // gets the color of the liquid in the water bottle, returns 1 if water,
-        // 0 if not
-        int isWater();
+        // gets the color of the liquid in the water bottle, using times readings.
+        // returns 1 if water, 0 if not
+        int isWater(byte times);
 };
 
 #endif // WATER_BOTTLE_H

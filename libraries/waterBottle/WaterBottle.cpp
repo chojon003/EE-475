@@ -8,8 +8,12 @@ WaterBottle::WaterBottle(byte HX711CLK, byte HX711Dout)
     wSensor.read();
     wSensor.power_down();
 
-    // initialize color sensor
+    // initialize color sensor and related variables
     colorSensor = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS34725_GAIN_1X);
+    rBottle = 0;
+    gBottle = 0;
+    bBottle = 0;
+    cBottle = 0;
     X = 25.0;
 }
 
@@ -46,16 +50,45 @@ short WaterBottle::getWaterWeight()
     return measuredWaterWeight;
 }
 
-void WaterBottle::calibrateColor()
+void WaterBottle::calibrateColor(byte times)
 {
-    colorSensor.getRawData(&rBottle, &gBottle, &bBottle, &cBottle);
+    // calibrate the color of the water bottle using averaged readings
+    uint16_t color[4];
+
+    rBottle = 0;
+    gBottle = 0;
+    bBottle = 0;
+    cBottle = 0;
+
+    for (byte i = 0; i < times; i++)
+    {
+        colorSensor.getRawData(&color[0], &color[1], &color[2], &color[3]);
+
+        rBottle += round(color[0] / (float) times);
+        gBottle += round(color[1] / (float) times);
+        bBottle += round(color[2] / (float) times);
+        cBottle += round(color[3] / (float) times);
+    }
 }
 
-int WaterBottle::isWater()
+int WaterBottle::isWater(byte times)
 {
-    // get current color
-    uint16_t r, g, b, c;
-    colorSensor.getRawData(&r, &g, &b, &c);
+    // get current color, averaged
+    uint16_t color[4];
+    uint16_t r = 0;
+    uint16_t g = 0;
+    uint16_t b = 0;
+    uint16_t c = 0;
+
+    for (byte i = 0; i < times; i++)
+    {
+        colorSensor.getRawData(&color[0], &color[1], &color[2], &color[3]);
+
+        r += round(color[0] / (float) times);
+        g += round(color[1] / (float) times);
+        b += round(color[2] / (float) times);
+        c += round(color[3] / (float) times);
+    }
 
     // compare current color to water bottle rgb values
     // if any rgb value is >X% different, than liquid is not water
