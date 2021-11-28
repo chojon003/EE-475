@@ -8,7 +8,7 @@ System powerTest;
 void setup()
 {
   // Sleep mode option
-  //powerTest.enterSleepMode();
+  //powerTest.enterSystemOffMode();
 }
 
 void loop() 

@@ -10,7 +10,7 @@
 class System
 {
     private:
-        
+
         Adafruit_LIS3DH lis;
         const int INTERRUPT_PIN = A0;
         const int LIS3DH_ADDR = 0x18;
@@ -34,9 +34,9 @@ class System
 
         float getBatteryVoltage();
 
-        void enterSleepMode();
+        void enterSystemOffMode();
 
-        int is_still();
+        int is_still(byte times);
 };
 
 #endif // SYSTEM_H

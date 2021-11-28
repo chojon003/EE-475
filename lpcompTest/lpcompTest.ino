@@ -157,7 +157,7 @@ void setup(void)
   
   delay(5000);
 
-  test.enterSleepMode();
+  test.enterSystemOffMode();
   
 }
 

@@ -21,7 +21,7 @@ System::System()
     Wire.begin();
     init_ACC();
     int res = readRegister(0x0F); //WHO_AM_I
-    pinMode(INTERRUPT_PIN, INPUT); 
+    pinMode(INTERRUPT_PIN, INPUT);
 }
 
 // will this work if battery voltage > ADCRefVoltage?
@@ -61,9 +61,9 @@ void System::enableDCReg(byte en)
 }
 
 // uses A0 pin on microcontroller board
-void System::enterSleepMode()
+void System::enterSystemOffMode()
 {
-    // set analog wake up pin to be A0 of board (AIN2 of microcontroller)
+    // set analog reset pin to be A0 of board (AIN2 of microcontroller)
     LPCOMPPSEL = 0x2;
 
     // select comparison voltage as VDD / 2 (1.15 V)
@@ -72,7 +72,7 @@ void System::enterSleepMode()
     // enable hysteresis feature
     LPCOMPHYST = 0x1;
 
-    // configure wake up for voltage rising on wake up pin
+    // configure reset for voltage rising on reset pin
     ANALOGDETECT = 0x1;
 
     // start comparator and wait for completion
@@ -80,7 +80,7 @@ void System::enterSleepMode()
     TASKS_LPCOMPSTART = 0x1;
     while (EVENTS_LPCOMPREADY == 0);
 
-    // enter sleep mode
+    // enter system off mode
     SYSTEMOFF = 0x1;
 }
 
@@ -94,18 +94,29 @@ void System::turnOffMemory()
     RAM8POWER = 0;
 }
 
-int System::is_still(){
-  sensors_event_t event;
-  lis.getEvent(&event);   // get a new accelerometer event
-  // Display the results (acceleration is measured in m/s^2)
-  double acc_x = event.acceleration.x;
-  double acc_y = event.acceleration.y;
-  double acc_z = event.acceleration.z+9.8;
-  if (abs(acc_x)<0.2 && abs(acc_y)<0.2 && abs(acc_z)<0.5){
-    Serial.println("The bottle is ready for measurement!");
-    return 1;
-  }
-  return 0;
+int System::is_still(byte times){
+    sensors_event_t event;
+
+    double acc_x = 0;
+    double acc_y = 0;
+    double acc_z = 0;
+
+    for (byte i = 0; i < times; i++)
+    {
+        lis.getEvent(&event);   // get a new accelerometer event
+        // Display the results (acceleration is measured in m/s^2)
+        acc_x += event.acceleration.x / times;
+        acc_y += event.acceleration.y / times;
+        acc_z += (event.acceleration.z + 9.8) / times;
+    }
+
+    if (abs(acc_x)<0.2 && abs(acc_y)<0.2 && abs(acc_z)<0.5)
+    {
+        Serial.println("The bottle is ready for measurement!");
+        return 1;
+    }
+    else
+        return 0;
 }
 
 unsigned int System::readRegister(byte reg)
@@ -134,7 +145,7 @@ void System::init_ACC(void)
    writeRegister(0x23, 0x00); //Write 00h into CTRL_REG4;      // Full Scale = +/-2 g
    writeRegister(0x24, 0x08); //Write 08h into CTRL_REG5;      // Default value is 00 for no latching. Interrupt signals on INT1 pin is not latched.
                                                 //Users don’t need to read the INT1_SRC register to clear the interrupt signal.
-   
+
    // configurations for wakeup and motionless detection
    writeRegister(0x32, 0x10); //Write 10h into INT1_THS;          // Threshold (THS) = 16LSBs * 15.625mg/LSB = 250mg.
    writeRegister(0x33, 0x00); //Write 00h into INT1_DURATION;     // Duration = 1LSBs * (1/10Hz) = 0.1s.
