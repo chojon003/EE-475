@@ -6,7 +6,7 @@ System::System()
     ADCResolution = 8; // 8 bits
 
     // configure ADC
-    //analogReadResolution(ADCResolution);
+    analogReadResolution(ADCResolution);
 
     // set low power
     //enableLFClock(1);
@@ -20,16 +20,15 @@ System::System()
     //pinMode(INTERRUPT_PIN, INPUT);
     //lis.setRange(LIS3DH_RANGE_4_G);   // set range to 2, 4, 8 or 16 G!
     //lis.setDataRate(LIS3DH_DATARATE_400_HZ); //set data rate
-    
+
 }
 
-// will this work if battery voltage > ADCRefVoltage?
-float System::getBatteryVoltage()
+int System::getBatteryPct()
 {
     // get battery voltage, multiply by 2 is used to undo resistor divider effect
     float batteryVoltage = analogRead(BATTERY_PIN) * 2 * ADCRefVoltage / pow(2, ADCResolution);
 
-    return batteryVoltage;
+    return constrain(round(batteryVoltage / 3.7 * 100), 0, 100);
 }
 
 void System::enableLFClock(byte en)
@@ -58,11 +57,11 @@ void System::enableDCReg(byte en)
     else
         DCDCEN = 0;
 }
-
+/*
 // uses A0 pin on microcontroller board
-void System::enterSleepMode()
+void System::enterSystemOffMode()
 {
-    // set analog wake up pin to be A0 of board (AIN2 of microcontroller)
+    // set analog reset pin to be A0 of board (AIN2 of microcontroller)
     LPCOMPPSEL = 0x2;
 
     // select comparison voltage as VDD / 2 (1.15 V)
@@ -71,7 +70,7 @@ void System::enterSleepMode()
     // enable hysteresis feature
     LPCOMPHYST = 0x1;
 
-    // configure wake up for voltage rising on wake up pin
+    // configure reset for voltage rising on reset pin
     ANALOGDETECT = 0x1;
 
     // start comparator and wait for completion
@@ -79,10 +78,11 @@ void System::enterSleepMode()
     TASKS_LPCOMPSTART = 0x1;
     while (EVENTS_LPCOMPREADY == 0);
 
-    // enter sleep mode
+    // enter system off mode
     SYSTEMOFF = 0x1;
 }
-
+*/
+/*
 void System::turnOffMemory()
 {
     // turn off unused ram memory
@@ -92,7 +92,7 @@ void System::turnOffMemory()
     RAM7POWER = 0;
     RAM8POWER = 0;
 }
-
+*/
 int System::is_still(byte times){
   sensors_event_t event;
 
@@ -113,10 +113,9 @@ int System::is_still(byte times){
   Serial.print(acc_y);
   Serial.print("\t");
   Serial.println(acc_z);
-  if (abs(acc_x)<0.3 && abs(acc_y)<0.3 && abs(acc_z)<0.8){
-    //Serial.println("The bottle is ready for measurement!");
+  if (abs(acc_x)<0.3 && abs(acc_y)<0.3 && abs(acc_z)<0.8)
     return 1;
-  }
+
   return 0;
 }
 

@@ -19,7 +19,7 @@ void setup()
 void loop() 
 {
   Serial.print("Battery voltage: ");
-  Serial.print(test.getBatteryVoltage());
+  Serial.print(test.getBatteryPct());
   Serial.print("\n");
   
   delay(500);
