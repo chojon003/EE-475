@@ -1,24 +1,21 @@
 #include <Arduino.h>
 #include "registers.h"
+//#include <Wire.h>
+#include "Adafruit_LIS3DH.h"
+#include "Adafruit_Sensor.h"
 
 #ifndef SYSTEM_H
 #define SYSTEM_H
-#include <Wire.h>
-#include <Adafruit_LIS3DH.h>
-#include <Adafruit_Sensor.h>
+//extern Adafruit_LIS3DH lis = Adafruit_LIS3DH();
 
 class System
 {
     private:
-
+        
         Adafruit_LIS3DH lis;
         const int INTERRUPT_PIN = A0;
         const int LIS3DH_ADDR = 0x18;
-        unsigned int readRegister(byte reg);
-        void writeRegister(byte reg, byte data);
-        void init_ACC(void);
-
-
+        
         const byte BATTERY_PIN = A6;
         float ADCRefVoltage;
         byte ADCResolution;
@@ -30,12 +27,15 @@ class System
         void turnOffMemory();
 
     public:
-        System(/* stuff like pins for sensors*/);
+        System();
 
         float getBatteryVoltage();
 
-        void enterSystemOffMode();
+        void enterSleepMode();
 
+        void init_ACC(void);
+        unsigned int readRegister(byte reg);
+        void writeRegister(byte reg, byte data);
         int is_still(byte times);
 };
 
