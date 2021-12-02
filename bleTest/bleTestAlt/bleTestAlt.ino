@@ -5,6 +5,7 @@
 // to send important sensor values to the app.
 
 #include "BLEComms.h"
+#include <Adafruit_TinyUSB.h>
 
 BLEComms comm;
 
@@ -17,6 +18,7 @@ void setup()
 
 void loop()
 {
+  /*
   // Forward from Serial to BLEUART
   if (Serial.available())
   {
@@ -28,12 +30,8 @@ void loop()
     int count = Serial.readBytes(buf, sizeof(buf));
     comm.sendData(buf, count);
   }
+  */
 
-  // Forward from BLEUART to Serial (won't be used with .h file)
-  if ( comm.bleuart.available() )
-  {
-    uint8_t ch;
-    ch = comm.getData();
-    Serial.write(ch);
-  }
+  delay(1000);
+  Serial.print(comm.calibrateRequest());
 }

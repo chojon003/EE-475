@@ -6,6 +6,7 @@ void BLEComms::connectToApp()
     Bluefruit.configPrphBandwidth(BANDWIDTH_MAX);
 
     Bluefruit.begin();
+    Bluefruit.autoConnLed(0); // turn off blue led on board (saves some power)
     Bluefruit.setTxPower(4);    // Check bluefruit.h for supported values
     Bluefruit.Periph.setConnectCallback(connect_callback);
     Bluefruit.Periph.setDisconnectCallback(disconnect_callback);
@@ -54,14 +55,32 @@ void BLEComms::setupAdv()
     Bluefruit.ScanResponse.addName();
 }
 
-void BLEComms::sendData(uint8_t data, int count)
+void BLEComms::sendData(short measWeight, byte isWater, byte batteryPct)
 {
-    bleuart.write(data, count);
+    char buf[11];
+    (String(measWeight) + " " + String(isWater) + " " + String(batteryPct)).toCharArray(buf, 11);
+
+    bleuart.write(buf, 11);
 }
 
-uint8_t BLEComms::getData()
+//short BLEComms::getData()
+bool BLEComms::calibrateRequest()
 {
-    return ((uint8_t) bleuart.read());
+    /*
+    String buf = "";
+
+    while (!bleuart.available());
+
+    while (bleuart.available())
+        buf += String((char) bleuart.read());
+
+    return buf.toInt();
+    */
+    if (bleuart.available())
+        if (String((char) bleuart.read()).toInt() == 1)
+            return true;
+
+    return false;
 }
 
 void BLEComms::connect_callback(uint16_t conn_handle)
