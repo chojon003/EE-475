@@ -31,6 +31,8 @@ void loop()
     comm.sendData(buf, count);
   }
   */
+  delay(4000);
+  comm.sendData(1000, 1, 50);
 
   delay(1000);
   Serial.print(comm.calibrateRequest());
