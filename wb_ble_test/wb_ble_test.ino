@@ -39,11 +39,10 @@ void setup()
   Serial.print("Put object on plate and enter its weight: ");
   /*while (Serial.available() == 0);
   objWeight = Serial.parseInt();*/
-  while (ble.calibrateRequest());
-  objWeight = ble.getdata();
-  Serial.print(objWeight);
+  while (!ble.calibrateRequest());
+  //Serial.print(objWeight);
 
-  bottle.calibrateBottleWeight(objWeight);
+  bottle.calibrateBottleWeight(objWeight); // --> 
   
   while (Serial.available() != 0) 
     Serial.readString();
