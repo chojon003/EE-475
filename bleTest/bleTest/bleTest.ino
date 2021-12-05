@@ -1,7 +1,7 @@
-// This file contains code for establishing BLE connection with 
+// This file contains code for establishing BLE connection with
 // our app, as well as two way communication between this mcu and
-// the app. Currently, this file is set up to send data to the app 
-// using the Serial input, but in the future, this file will be able 
+// the app. Currently, this file is set up to send data to the app
+// using the Serial input, but in the future, this file will be able
 // to send important sensor values to the app.
 
 #include <bluefruit.h>
@@ -13,7 +13,7 @@ BLEDfu  bledfu;  // OTA DFU service
 BLEDis  bledis;  // device information
 BLEUart bleuart; // uart over ble
 BLEBas  blebas;  // battery
-
+int count = 0;
 void setup()
 {
   Serial.begin(115200);
@@ -22,6 +22,9 @@ void setup()
 
 void loop()
 {
+//  delay(1000);
+//  count++;
+//  bleuart.write("HELLO");
   // Forward from Serial to BLEUART
   if (Serial.available())
   {
@@ -31,7 +34,10 @@ void loop()
 
     uint8_t buf[64];
     int count = Serial.readBytes(buf, sizeof(buf));
-    sendData(buf, count);
+    bleuart.write(buf, count);
+    bleuart.flush();
+    
+    //    sendData(buf, count);
   }
 
   // Forward from BLEUART to Serial
@@ -45,10 +51,11 @@ void loop()
 
 // Sets up microcontroller to be used as peripheral for BLE communication
 void connectToApp() {
-  // Config the peripheral connection with maximum bandwidth 
+  // Config the peripheral connection with maximum bandwidth
   Bluefruit.configPrphBandwidth(BANDWIDTH_MAX);
-  
+
   Bluefruit.begin();
+  //  Bluefruit.autoConnLed(0);
   Bluefruit.setTxPower(4);    // Check bluefruit.h for supported values
   Bluefruit.Periph.setConnectCallback(connect_callback);
   Bluefruit.Periph.setDisconnectCallback(disconnect_callback);
@@ -58,11 +65,12 @@ void connectToApp() {
 
   // Configure and Start Device Information Service
   bledis.setManufacturer("Adafruit Industries");
-  bledis.setModel("Bluefruit Feather52");
+  bledis.setModel("DrinkingBuddy");
   bledis.begin();
 
   // Configure and Start BLE Uart Service
   bleuart.begin();
+  Serial.println(bleuart.notifyEnabled());
 
   // Start BLE Battery Service
   blebas.begin();
@@ -72,15 +80,15 @@ void connectToApp() {
   setupAdv();
 
   /* Start Advertising
-   * - Enable auto advertising if disconnected
-   * - Interval:  fast mode = 20 ms, slow mode = 152.5 ms
-   * - Timeout for fast mode is 30 seconds
-   * - Start(timeout) with timeout = 0 will advertise forever (until connected) 
-   */
+     - Enable auto advertising if disconnected
+     - Interval:  fast mode = 20 ms, slow mode = 152.5 ms
+     - Timeout for fast mode is 30 seconds
+     - Start(timeout) with timeout = 0 will advertise forever (until connected)
+  */
   Bluefruit.Advertising.restartOnDisconnect(true);
   Bluefruit.Advertising.setInterval(32, 244);    // in unit of 0.625 ms
   Bluefruit.Advertising.setFastTimeout(30);      // number of seconds in fast mode
-  Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds 
+  Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds
 }
 
 // Sets up necessary flags for advertising to begin
@@ -94,17 +102,17 @@ void setupAdv(void) {
 
   // Secondary Scan Response packet (optional)
   // Since there is no room for 'Name' in Advertising packet
-  Bluefruit.ScanResponse.addName(); 
+  Bluefruit.ScanResponse.addName();
 }
 
-// Sends data to app 
+// Sends data to app
 void sendData(uint8_t data, int count) {
-  bleuart.write(data, count);
+  //  bleuart.write(data, count);
 }
 
 // Returns data from app
 uint8_t getData() {
-    return ((uint8_t)bleuart.read());
+  return ((uint8_t)bleuart.read());
 }
 
 // callback invoked when central connects
@@ -121,10 +129,10 @@ void connect_callback(uint16_t conn_handle)
 }
 
 /**
- * Callback invoked when a connection is dropped
- * @param conn_handle connection where this event happens
- * @param reason is a BLE_HCI_STATUS_CODE which can be found in ble_hci.h
- */
+   Callback invoked when a connection is dropped
+   @param conn_handle connection where this event happens
+   @param reason is a BLE_HCI_STATUS_CODE which can be found in ble_hci.h
+*/
 void disconnect_callback(uint16_t conn_handle, uint8_t reason)
 {
   (void) conn_handle;
