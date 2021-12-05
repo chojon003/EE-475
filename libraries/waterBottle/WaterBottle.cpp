@@ -1,11 +1,12 @@
 #include "WaterBottle.h"
 
-WaterBottle::WaterBottle(byte HX711CLK, byte HX711Dout)
+WaterBottle::WaterBottle()
 {
     // initialize weight sensor
-    wSensor.begin(HX711Dout, HX711CLK, 64);
+    wSensor.begin(HX711_DOUT_PIN, HX711_CLK_PIN, HX711_GAIN);
     wSensor.power_up();
     wSensor.read();
+    wSensor.set_scale(W_SENSOR_SCALE);
     wSensor.power_down();
 
     // initialize color sensor and related variables
@@ -26,28 +27,17 @@ void WaterBottle::tareWeightPlate()
     wSensor.power_down();
 }
 
-void WaterBottle::calibrateBottleWeight(short knownBottleWeight)
+short WaterBottle::getWeight()
 {
-    wSensor.power_up();
-
-    wSensor.set_scale(wSensor.get_units(10) / knownBottleWeight);
-
-    wSensor.tare();
-
-    wSensor.power_down();
-}
-
-short WaterBottle::getWaterWeight()
-{
-    short measuredWaterWeight = 0;
+    short measuredWeight = 0;
 
     wSensor.power_up();
 
-    measuredWaterWeight = round(wSensor.get_units(10));
+    measuredWeight = round(wSensor.get_units(10));
 
     wSensor.power_down();
 
-    return measuredWaterWeight;
+    return measuredWeight;
 }
 
 void WaterBottle::calibrateColor(byte times)

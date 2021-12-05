@@ -11,24 +11,24 @@ class WaterBottle
 {
     private:
         HX711 wSensor;
+        const byte HX711_CLK_PIN = 12;
+        const byte HX711_DOUT_PIN = 11;
+        const byte HX711_GAIN = 64; // 64 or 128
+        const short W_SENSOR_SCALE = 100; // temporary value, determined through testing, value of wSensor.get_units(10) / knownBottleWeight
 
         Adafruit_TCS34725 colorSensor;
         uint16_t rBottle, gBottle, bBottle, cBottle;
-        double X;
+        float X;
 
     public:
         // constructor, requires that nothing be on weight sensors when started
-        WaterBottle(byte HX711CLK, byte HX711Dout);
+        WaterBottle();
 
         // tares the initial weight on the weight sensor
         void tareWeightPlate();
 
-        // calibrates the weight sensor readings, requires an empty bottle to be
-        // placed on the weight sensing plate
-        void calibrateBottleWeight(short knownBottleWeight); // in grams
-
-        // returns the current weight of water in the water bottle
-        short getWaterWeight();
+        // returns the current weight measured
+        short getWeight();
 
         // saves the base color of the water bottle, averaged over times readings
         void calibrateColor(byte times);
