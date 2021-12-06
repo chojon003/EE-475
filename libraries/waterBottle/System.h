@@ -19,12 +19,6 @@ class System
         float ADCRefVoltage;
         byte ADCResolution;
 
-        // enables ultra low power 32.768 kHz clock
-        void enableLFClock();
-
-        // enables DC/DC regulator for microchip voltage supply
-        void enableDCReg();
-
         // i2c read register function, for accelerometer registers
         unsigned int readRegister(byte reg);
 

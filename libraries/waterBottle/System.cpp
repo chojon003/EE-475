@@ -26,26 +26,10 @@ int System::getBatteryPct()
     return constrain(round(batteryVoltage / 3.7 * 100), 0, 100);
 }
 
-void System::enableLFClock()
-{
-    LFCLKSRC = 0; // set LF clock source as RC oscillator
-    LFRCMODE = 0x1; // set LFRC mode to ultra low power
-    TASKS_LFCLKSTART = 0x1; // start LF clock
-
-    while ((LFCLKSTAT & 0x10000) == 0); // wait for LF clock to start
-}
-
-void System::enableDCReg()
+void System::setLowPower()
 {
     // enable DC/DC regulator
     DCDCEN = 0x1;
-}
-
-void System::setLowPower()
-{
-    // enable low power options
-    enableLFClock();
-    enableDCReg();
 }
 
 int System::is_still(byte times){
