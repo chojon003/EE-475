@@ -1,13 +1,10 @@
 // test file for weight sensor
-// requires calibrateBottleWeight third line to be commented out
 
 #include "WaterBottle.h"
 #include <Adafruit_TinyUSB.h>
 
-WaterBottle bottle(5, 6);
-short containerWeight;
+WaterBottle bottle;
 short objWeight;
-long raw;
 
 void setup()
 {
@@ -24,8 +21,6 @@ void setup()
   while (Serial.available() == 0);
   objWeight = Serial.parseInt();
   Serial.print(objWeight);
-
-  bottle.calibrateBottleWeight(objWeight);
   
   while (Serial.available() != 0) 
     Serial.readString();
@@ -39,7 +34,7 @@ void loop()
   Serial.print(objWeight);
 
   Serial.print("\nMeasured object weight: ");
-  Serial.print(bottle.getWaterWeight());
+  Serial.print(bottle.getWeight());
 
   Serial.print("\n\n");
 

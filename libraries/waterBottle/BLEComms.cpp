@@ -16,7 +16,7 @@ void BLEComms::connectToApp()
 
     // Configure and Start Device Information Service
     bledis.setManufacturer("Adafruit Industries");
-    bledis.setModel("Bluefruit Feather52");
+    bledis.setModel("DrinkingBuddy");
     bledis.begin();
 
     // Configure and Start BLE Uart Service
@@ -57,25 +57,14 @@ void BLEComms::setupAdv()
 
 void BLEComms::sendData(short measWeight, byte isWater, byte batteryPct)
 {
-    char buf[11];
-    (String(measWeight) + " " + String(isWater) + " " + String(batteryPct)).toCharArray(buf, 11);
+    char buf[12];
+    (String(measWeight) + " " + String(isWater) + " " + String(batteryPct) + " ").toCharArray(buf, 12);
 
-    bleuart.write(buf, 11);
+    bleuart.write(buf, 12);
 }
 
-//short BLEComms::getData()
 bool BLEComms::calibrateRequest()
 {
-    /*
-    String buf = "";
-
-    while (!bleuart.available());
-
-    while (bleuart.available())
-        buf += String((char) bleuart.read());
-
-    return buf.toInt();
-    */
     if (bleuart.available())
         if (String((char) bleuart.read()).toInt() == 1)
             return true;
