@@ -13,7 +13,7 @@ int INTERRUPT_PIN = A0;
 int LIS3DH_ADDR = 0x18;
 
 
-WaterBottle bottle(5, 6);
+WaterBottle bottle;
 /*BLE initialization*/
 System sys;
 short containerWeight;
@@ -39,32 +39,30 @@ void setup()
 
   // weight sensor setup
   bottle.tareWeightPlate();
-  
+
   Serial.print("Put object on plate and enter its weight: ");
   while (Serial.available() == 0);
   objWeight = Serial.parseInt(); //replace with BLE func later
   Serial.print(objWeight);
 
-  bottle.calibrateBottleWeight(objWeight);
-  
-  while (Serial.available() != 0) 
+  while (Serial.available() != 0)
     Serial.readString();
   Serial.print("\n");
 
   // color sensor setup
-  bottle.calibrateColor();
+  bottle.calibrateColor(5);
   Serial.print("Calibrate Color = ");
-  Serial.print(bottle.isWater());
+  Serial.print(bottle.isWater(5));
   Serial.print("\n\n");
 
   // accelerometer setup
   /*while(!lis.begin(LIS3DH_ADDR)) {
     Serial.println("Couldn't start");
-  }
-  Serial.println("LIS3DH found!");*/
+    }
+    Serial.println("LIS3DH found!");*/
   sys.init_ACC();
   Wire.begin();
-  int res = sys.readRegister(0x0F); //WHO_AM_I
+  int res = sys.readRegister(0x0F); //WHO_AM_I, idk
   Serial.println(res);
   pinMode(INTERRUPT_PIN, INPUT);
   //lis.setRange(LIS3DH_RANGE_2_G);   // set range to 2, 4, 8 or 16 G!
@@ -73,18 +71,18 @@ void setup()
   delay(100);
 }
 
-void loop() 
-{  
-  if(!sys.is_still(1)){ //is not still
+void loop()
+{
+  if (!sys.is_still(1)) { //is not still
     reading_permission = 1;
     //Serial.println("Read Permission set to 1!");
     delay(500);
     // sleep mode
-    if(!sys.is_still(1)){
+    if (!sys.is_still(1)) {
       // enter sleep mode
       Serial.println("Enter sleep mode!");
       sys.writeRegister(0x21, 0x09);
-      while(analogRead(A0)*3.6/pow(2,8)>1.65){ 
+      while (analogRead(A0) * 3.6 / pow(2, 8) > 1.65) {
         sys.readRegister(LIS3DH_REG_INT1SRC); //Read INT1_SRC to de-latch;
         delay(10000);
       }
@@ -93,28 +91,28 @@ void loop()
       //sleep mode ended
       Serial.println("Sleep mode ended!");
     }
-  }else{ 
-    if(reading_permission){
+  } else {
+    if (reading_permission) {
       // single object measuring
       Serial.print("\nEntered object weight: ");
       Serial.print(objWeight);
-      raw = bottle.getWaterWeight();
+      raw = bottle.getWeight();
       Serial.print("\nMeasured object weight: ");
       Serial.print(raw);
       Serial.print("\n");
-      water = bottle.isWater();
+      water = bottle.isWater(5);
       Serial.print("Is water: ");
       Serial.print(water);
       Serial.print("\n");
 
       reading_permission = 0;
       //Serial.println("Read Permission set to 0!");
-      
+
       // send the data to phone app
       Serial.println("send the data to phone app!\n");
       /*BLE code - sending data to phone app*/
       // sleep()
-    }else{
+    } else {
       //delay(5000);
     }
   }
@@ -123,8 +121,8 @@ void loop()
 }
 
 /*
-// acc
-int is_still(byte times){
+  // acc
+  int is_still(byte times){
   sensors_event_t event;
 
   double acc_x = 0;
@@ -149,28 +147,28 @@ int is_still(byte times){
     return 1;
   }
   return 0;
-}
+  }
 
 
-unsigned int readRegister(byte reg)
-{
+  unsigned int readRegister(byte reg)
+  {
    Wire.beginTransmission(LIS3DH_ADDR);
    Wire.write(reg);
    Wire.endTransmission();
    Wire.requestFrom(LIS3DH_ADDR, 1);
    return Wire.read();
-}
+  }
 
-void writeRegister(byte reg, byte data)
-{
+  void writeRegister(byte reg, byte data)
+  {
    Wire.beginTransmission(LIS3DH_ADDR);
    Wire.write(reg);
    Wire.write(data);
    Wire.endTransmission();
-}
+  }
 
-void init_ACC(void)
-{
+  void init_ACC(void)
+  {
    // configurations for control registers
    writeRegister(0x20, 0x57); //Write 57h into CTRL_REG1;      // Turn on the sensor, enable X, Y, Z axes with ODR = 100Hz normal mode.
    //writeRegister(0x21, 0x09); //Write 09h into CTRL_REG2;      // High-pass filter (HPF) enabled
@@ -185,4 +183,4 @@ void init_ACC(void)
    //readRegister();  //Dummy read to force the HP filter to set reference acceleration/tilt value
    writeRegister(0x30, 0x2A); //Write 2Ah into INT1_CFG;          // Enable XLIE, YLIE, ZLIE interrupt generation, OR logic.
    //writeRegister(0x30, 0x95); //free-fall recognition
-}*/
+  }*/

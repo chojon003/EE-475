@@ -21,33 +21,24 @@ int battery;
 int reading_permission = 1; // reading allowed when the bottle turns on
 
 
-void setup()
+int is_still(byte times);
+unsigned int readRegister(byte reg);
+void writeRegister(byte reg, byte data);
+void init_ACC(void);
+
+void setup() // User's First Time Setup with Device
 {
-  // Serial setup
-  Serial.begin(115200);
-  while (!Serial)
-  {
-    Serial.print("Waiting...\n");
-    delay(500);
-  }
-Serial.println("BeforeConnecting");
-  // BLE setup
+  // Connect to App using BLE
   ble.connectToApp();
-  
+
+  // Wait for confirmation to calibrate 
   while (!ble.calibrateRequest());
   while (Serial.available() != 0) 
     Serial.readString();
   Serial.print("\n");
   
   // weight sensor setup
-  bottle.tareWeightPlate();
-  
-  Serial.print("Put object on plate and enter its weight: ");
-  
-  /*while (Serial.available() == 0);
-  objWeight = Serial.parseInt();*/
-  //Serial.print(objWeight);
-  
+  bottle.tareWeightPlate();  
 
   // color sensor setup
   bottle.calibrateColor(5);
@@ -62,25 +53,25 @@ Serial.println("BeforeConnecting");
   int res = readRegister(0x0F); //WHO_AM_I
   Serial.println(res);
   pinMode(INTERRUPT_PIN, INPUT);
-  //lis.setRange(LIS3DH_RANGE_2_G);   // set range to 2, 4, 8 or 16 G!
-  //lis.setDataRate(LIS3DH_DATARATE_400_HZ);
 
+  // Sets up MCU for low power
+  sys.setLowPower();
+  
   delay(100);
 }
 
 void loop() 
 {  
-  if(!is_still(1)){ //is not still
+  if(!is_still(1)){ // moving
     reading_permission = 1;
     //Serial.println("Read Permission set to 1!");
-    
     delay(500);
     
-    if(!is_still(1)){
+    if(!is_still(1)){ // If moving for a long time
       // enter sleep mode
       Serial.println("Enter sleep mode!");
       writeRegister(0x21, 0x09);
-      while(analogRead(A0)*3.6/pow(2,8)>1.65){ 
+      while(analogRead(A0)*3.6/pow(2,8)>1.65){ // checks if device is still moving every 10 seconds
         readRegister(LIS3DH_REG_INT1SRC); //Read INT1_SRC to de-latch;
         delay(10000);
       }
@@ -89,7 +80,17 @@ void loop()
       //sleep mode ended
       Serial.println("Sleep mode ended!");
     }
-  }else{ 
+  }else{ //not in motion
+    // attempt to connect to App
+
+    // catch for color calibration request
+    if(ble.calibrateRequest()){ 
+      // calibrate device again 
+        bottle.calibrateColor(5);
+        Serial.println("Recalibrated color success");
+    }
+    
+    // Sends values to App only the first time not in motion
     if(reading_permission){
       // single object measuring
       Serial.print("\nEntered object weight: ");

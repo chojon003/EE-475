@@ -19,12 +19,6 @@ class System
         float ADCRefVoltage;
         byte ADCResolution;
 
-        // i2c read register function, for accelerometer registers
-        unsigned int readRegister(byte reg);
-
-        // i2c write register function, for accelerometer registers
-        void writeRegister(byte reg, byte data);
-
     public:
         System();
 
@@ -41,6 +35,12 @@ class System
         // returns 1 or 0 if system is still or not, using an average of times
         // accelerometer readings
         int is_still(byte times);
+
+        // i2c read register function, for accelerometer registers
+        unsigned int readRegister(byte reg);
+
+        // i2c write register function, for accelerometer registers
+        void writeRegister(byte reg, byte data);
 };
 
 #endif // SYSTEM_H
