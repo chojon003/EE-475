@@ -28,14 +28,17 @@ void init_ACC(void);
 
 void setup() // User's First Time Setup with Device
 {
+  Serial.begin(115200);
+  while (!Serial)
+  {
+    Serial.print("Waiting...\n");
+    delay(500);
+  }
   // Connect to App using BLE
   ble.connectToApp();
 
   // Wait for confirmation to calibrate 
   while (!ble.calibrateRequest());
-  while (Serial.available() != 0) 
-    Serial.readString();
-  Serial.print("\n");
   
   // weight sensor setup
   bottle.tareWeightPlate();  
@@ -55,7 +58,7 @@ void setup() // User's First Time Setup with Device
   pinMode(INTERRUPT_PIN, INPUT);
 
   // Sets up MCU for low power
-  sys.setLowPower();
+  //sys.setLowPower();
   
   delay(100);
 }
@@ -63,11 +66,12 @@ void setup() // User's First Time Setup with Device
 void loop() 
 {  
   if(!is_still(1)){ // moving
-    reading_permission = 1;
     //Serial.println("Read Permission set to 1!");
     delay(500);
     
     if(!is_still(1)){ // If moving for a long time
+      reading_permission = 1;
+
       // enter sleep mode
       Serial.println("Enter sleep mode!");
       writeRegister(0x21, 0x09);
@@ -137,11 +141,17 @@ int is_still(byte times){
         lis.getEvent(&event);   // get a new accelerometer event
         // Display the results (acceleration is measured in m/s^2)
         acc_x += event.acceleration.x / times;
-        acc_y += event.acceleration.y / times;
+        acc_y += (event.acceleration.y+0.2) / times;
         acc_z += (event.acceleration.z - 10.2) / times;
     }
-
-    if (abs(acc_x)<0.3 && abs(acc_y)<0.3 && abs(acc_z)<0.8)
+//    Serial.print(acc_x);
+//    Serial.print("\t");
+//    Serial.print(acc_y);
+//    Serial.print("\t");
+//    Serial.print(acc_z);
+//    Serial.print("\n");
+    
+    if (abs(acc_x)<0.3 && abs(acc_y)<0.3 && abs(acc_z)<1)
         return 1;
 
     return 0;

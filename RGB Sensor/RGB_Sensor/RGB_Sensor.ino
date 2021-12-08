@@ -14,7 +14,7 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_614MS, TCS347
 // currently stores data in global var, when implemented will change so that app can
 // send these values to the mcu instead.
 uint16_t rBottle, gBottle, bBottle, cBottle;
-double X = 25.0;
+double X = 50.0;
 
 void setup() {
   
@@ -52,7 +52,11 @@ int getColor() {
   // get current color
   uint16_t r, g, b, c;
   tcs.getRawData(&r, &g, &b, &c);
-
+  Serial.println(r);
+  Serial.println(g);
+  Serial.println(b);
+  Serial.println(c);
+ 
   // compare current color to water bottle rgb values
   // if any rgb value is >15% different, than liquid is not water
   double rDiff, gDiff, bDiff;
